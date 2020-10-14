@@ -393,7 +393,7 @@ where
             .spi
             .transfer(command)
             .and_then(|_| self.spi.transfer(result));
-        asm::delay(20);
+
         self.deselect();
         r.map(|_| ()).map_err(From::from)
     }
