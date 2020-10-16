@@ -431,7 +431,7 @@ where
     /// Reads the current aquisition from the ADC as an f32.
     pub fn data_f32(&mut self) -> Result<f32, Ads1220Error<<SPI as Transfer<u8>>::Error>> {
         let d = self.data_i32()? as f32;
-        Ok((d / ((2_u32.pow(23)) as f32)) * 2.0)
+        Ok((d / ((2_u32.pow(23)) as f32)))
     }
 
     /// Writes a config register of the ADS1220.
