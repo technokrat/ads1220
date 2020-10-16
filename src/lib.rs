@@ -365,6 +365,27 @@ where
     ncs: NCS,
 }
 
+/// Calculate the Config1::DataRate from a given sasmple rate
+pub fn datarate_from_samplerate(sample_rate: f32, om: OperatingMode) -> Result<DataRate,()> {
+    let multiplier: f32 = match om {
+        OperatingMode::Normal => 1.0,
+        OperatingMode::DutyCycle => 0.25,
+        OperatingMode::Turbo => 2.0,
+        _ => {return Err(())},
+    };
+    
+    match sample_rate * multiplier {
+        i if i < 20.0 => Ok(DataRate::Sps20_5_40),
+        i if i < 45.0 => Ok(DataRate::Sps45_11_90),
+        i if i < 90.0 => Ok(DataRate::Sps90_22_180),
+        i if i < 175.0 => Ok(DataRate::Sps175_44_350),
+        i if i < 330.0 => Ok(DataRate::Sps330_82_660),
+        i if i < 600.0 => Ok(DataRate::Sps600_150_1200),
+        i if i < 1000.0 => Ok(DataRate::Sps1000_250_2000),
+        _ => Err(()),
+    }
+}
+
 impl<SPI, NCS> Ads1220<SPI, NCS>
 where
     SPI: Transfer<u8>,
