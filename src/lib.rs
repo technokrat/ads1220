@@ -384,6 +384,26 @@ pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode)
         _ => Err(()),
     }
 }
+/// Calculate the samplerate from a given data rate
+pub fn samplerate_from_datarate(data_rate: DataRate, operating_mode: OperatingMode) -> Result<u32,()> {
+    let normal: u32 = match data_rate {
+        DataRate::Sps20_5_40 => 20,
+        DataRate::Sps45_11_90 => 45,
+        DataRate::Sps90_22_180 => 90,
+        DataRate::Sps175_44_350 => 175,
+        DataRate::Sps330_82_660 => 330,
+        DataRate::Sps600_150_1200 => 600,
+        DataRate::Sps1000_250_2000 => 1000,
+        _ => {return Err(());},
+    };
+    
+    Ok(match operating_mode {
+        OperatingMode::Normal => normal,
+        OperatingMode::DutyCycle => (normal+2)/4,
+        OperatingMode::Turbo => normal*2,
+        _ => {return Err(());}
+    })
+}
 
 impl<SPI, NCS> Ads1220<SPI, NCS>
 where
