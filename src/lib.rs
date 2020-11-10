@@ -23,8 +23,7 @@ macro_rules! benum {
             ),+ $(,)?
         }
     } => {
-        #[derive(Debug)]
-        #[derive(Clone)]
+        #[derive(Debug,Clone,Copy)]
         $(#[$outer])*
         pub enum $name {
             $(
