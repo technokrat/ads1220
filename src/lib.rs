@@ -365,8 +365,8 @@ where
 }
 
 /// Calculate the Config1::DataRate from a given sasmple rate
-pub fn datarate_from_samplerate(sample_rate: f32, om: OperatingMode) -> Result<DataRate,()> {
-    let multiplier: f32 = match om {
+pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode) -> Result<DataRate,()> {
+    let sample_rate: f32 = match operating_mode {
         OperatingMode::Normal => 1.0,
         OperatingMode::DutyCycle => 0.25,
         OperatingMode::Turbo => 2.0,
