@@ -364,7 +364,7 @@ where
     ncs: NCS,
 }
 
-/// Calculate the Config1::DataRate from a given sasmple rate
+/// Calculate the Config1::DataRate from a given sample rate.
 pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode) -> Result<DataRate,()> {
     let sample_rate: f32 = match operating_mode {
         OperatingMode::Normal => 1.0,
@@ -384,7 +384,8 @@ pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode)
         _ => Err(()),
     }
 }
-/// Calculate the samplerate from a given data rate
+
+/// Calculate the samplerate from a given data rate.
 pub fn samplerate_from_datarate(data_rate: DataRate, operating_mode: OperatingMode) -> Result<u32,()> {
     let normal: u32 = match data_rate {
         DataRate::Sps20_5_40 => 20,
