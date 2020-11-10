@@ -373,14 +373,14 @@ pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode)
         _ => {return Err(())},
     };
     
-    match sample_rate * multiplier {
-        i if i < 20.0 => Ok(DataRate::Sps20_5_40),
-        i if i < 45.0 => Ok(DataRate::Sps45_11_90),
-        i if i < 90.0 => Ok(DataRate::Sps90_22_180),
-        i if i < 175.0 => Ok(DataRate::Sps175_44_350),
-        i if i < 330.0 => Ok(DataRate::Sps330_82_660),
-        i if i < 600.0 => Ok(DataRate::Sps600_150_1200),
-        i if i < 1000.0 => Ok(DataRate::Sps1000_250_2000),
+    match sample_rate as u32 {
+        i if i < 20 => Ok(DataRate::Sps20_5_40),
+        i if i < 45 => Ok(DataRate::Sps45_11_90),
+        i if i < 90 => Ok(DataRate::Sps90_22_180),
+        i if i < 175 => Ok(DataRate::Sps175_44_350),
+        i if i < 330 => Ok(DataRate::Sps330_82_660),
+        i if i < 600 => Ok(DataRate::Sps600_150_1200),
+        i if i < 1000 => Ok(DataRate::Sps1000_250_2000),
         _ => Err(()),
     }
 }
