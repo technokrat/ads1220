@@ -368,8 +368,8 @@ where
 pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode) -> Result<DataRate,()> {
     let sample_rate: f32 = match operating_mode {
         OperatingMode::Normal => 1.0,
-        OperatingMode::DutyCycle => 0.25,
-        OperatingMode::Turbo => 2.0,
+        OperatingMode::DutyCycle => sample_rate * 4.0,
+        OperatingMode::Turbo => (sample_rate+1.0)/2.0,
         _ => {return Err(())},
     };
     
