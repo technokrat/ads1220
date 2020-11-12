@@ -23,8 +23,7 @@ macro_rules! benum {
             ),+ $(,)?
         }
     } => {
-        #[derive(Debug)]
-        #[derive(Clone)]
+        #[derive(Debug,Clone,Copy)]
         $(#[$outer])*
         pub enum $name {
             $(
@@ -366,24 +365,51 @@ where
 }
 
 /// Calculate the Config1::DataRate from a given sample rate.
-pub fn datarate_from_samplerate(sample_rate: f32, om: OperatingMode) -> Result<DataRate,()> {
-    let multiplier: f32 = match om {
+pub fn datarate_from_samplerate(
+    sample_rate: f32,
+    operating_mode: OperatingMode,
+) -> Result<DataRate, ()> {
+    let sample_rate: f32 = match operating_mode {
         OperatingMode::Normal => 1.0,
-        OperatingMode::DutyCycle => 0.25,
-        OperatingMode::Turbo => 2.0,
-        _ => {return Err(())},
+        OperatingMode::DutyCycle => sample_rate * 4.0,
+        OperatingMode::Turbo => (sample_rate + 1.0) / 2.0,
+        _ => return Err(()),
     };
-    
-    match sample_rate * multiplier {
-        i if i < 20.0 => Ok(DataRate::Sps20_5_40),
-        i if i < 45.0 => Ok(DataRate::Sps45_11_90),
-        i if i < 90.0 => Ok(DataRate::Sps90_22_180),
-        i if i < 175.0 => Ok(DataRate::Sps175_44_350),
-        i if i < 330.0 => Ok(DataRate::Sps330_82_660),
-        i if i < 600.0 => Ok(DataRate::Sps600_150_1200),
-        i if i < 1000.0 => Ok(DataRate::Sps1000_250_2000),
+
+    match sample_rate as u32 {
+        i if i < 20 => Ok(DataRate::Sps20_5_40),
+        i if i < 45 => Ok(DataRate::Sps45_11_90),
+        i if i < 90 => Ok(DataRate::Sps90_22_180),
+        i if i < 175 => Ok(DataRate::Sps175_44_350),
+        i if i < 330 => Ok(DataRate::Sps330_82_660),
+        i if i < 600 => Ok(DataRate::Sps600_150_1200),
+        i if i < 1000 => Ok(DataRate::Sps1000_250_2000),
         _ => Err(()),
     }
+}
+
+/// Calculate the samplerate from a given data rate.
+pub fn samplerate_from_datarate(
+    data_rate: DataRate,
+    operating_mode: OperatingMode,
+) -> Result<u32, ()> {
+    let normal: u32 = match data_rate {
+        DataRate::Sps20_5_40 => 20,
+        DataRate::Sps45_11_90 => 45,
+        DataRate::Sps90_22_180 => 90,
+        DataRate::Sps175_44_350 => 175,
+        DataRate::Sps330_82_660 => 330,
+        DataRate::Sps600_150_1200 => 600,
+        DataRate::Sps1000_250_2000 => 1000,
+        _ => return Err(()),
+    };
+
+    Ok(match operating_mode {
+        OperatingMode::Normal => normal,
+        OperatingMode::DutyCycle => (normal + 2) / 4,
+        OperatingMode::Turbo => normal * 2,
+        _ => return Err(()),
+    })
 }
 
 impl<SPI, NCS> Ads1220<SPI, NCS>
