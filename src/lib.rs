@@ -365,14 +365,17 @@ where
 }
 
 /// Calculate the Config1::DataRate from a given sample rate.
-pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode) -> Result<DataRate,()> {
+pub fn datarate_from_samplerate(
+    sample_rate: f32,
+    operating_mode: OperatingMode,
+) -> Result<DataRate, ()> {
     let sample_rate: f32 = match operating_mode {
         OperatingMode::Normal => 1.0,
         OperatingMode::DutyCycle => sample_rate * 4.0,
-        OperatingMode::Turbo => (sample_rate+1.0)/2.0,
-        _ => {return Err(())},
+        OperatingMode::Turbo => (sample_rate + 1.0) / 2.0,
+        _ => return Err(()),
     };
-    
+
     match sample_rate as u32 {
         i if i < 20 => Ok(DataRate::Sps20_5_40),
         i if i < 45 => Ok(DataRate::Sps45_11_90),
@@ -386,7 +389,10 @@ pub fn datarate_from_samplerate(sample_rate: f32, operating_mode: OperatingMode)
 }
 
 /// Calculate the samplerate from a given data rate.
-pub fn samplerate_from_datarate(data_rate: DataRate, operating_mode: OperatingMode) -> Result<u32,()> {
+pub fn samplerate_from_datarate(
+    data_rate: DataRate,
+    operating_mode: OperatingMode,
+) -> Result<u32, ()> {
     let normal: u32 = match data_rate {
         DataRate::Sps20_5_40 => 20,
         DataRate::Sps45_11_90 => 45,
@@ -395,14 +401,14 @@ pub fn samplerate_from_datarate(data_rate: DataRate, operating_mode: OperatingMo
         DataRate::Sps330_82_660 => 330,
         DataRate::Sps600_150_1200 => 600,
         DataRate::Sps1000_250_2000 => 1000,
-        _ => {return Err(());},
+        _ => return Err(()),
     };
-    
+
     Ok(match operating_mode {
         OperatingMode::Normal => normal,
-        OperatingMode::DutyCycle => (normal+2)/4,
-        OperatingMode::Turbo => normal*2,
-        _ => {return Err(());}
+        OperatingMode::DutyCycle => (normal + 2) / 4,
+        OperatingMode::Turbo => normal * 2,
+        _ => return Err(()),
     })
 }
 
