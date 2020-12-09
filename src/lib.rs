@@ -111,6 +111,8 @@ benum!(
 
 bitfield::bitfield! {
     /// Configuration Register 0 of the ADS1220.
+
+    #[derive(Clone,Copy,Eq,PartialEq)]
     pub struct Config0(u8);
     impl Debug;
     /// Configures the mux of the ADS1220.
@@ -172,6 +174,8 @@ benum!(
 
 bitfield::bitfield! {
     /// Configuration Register 1 of the ADS1220.
+
+    #[derive(Clone,Copy,Eq,PartialEq)]
     pub struct Config1(u8);
     impl Debug;
     /// Configures the data rate of the AD1220.
@@ -252,6 +256,8 @@ benum!(
 
 bitfield::bitfield! {
     /// Configuration Register 2 of the ADS1220.
+
+    #[derive(Clone,Copy,Eq,PartialEq)]
     pub struct Config2(u8);
     impl Debug;
     pub from into VoltageReference, vref, set_vref: 7,6;
@@ -292,6 +298,7 @@ benum!(
 );
 
 bitfield::bitfield! {
+    #[derive(Clone,Copy,Eq,PartialEq)]
     pub struct Config3(u8);
     impl Debug;
     pub from into Imux, i1mux, set_i1mux: 7,5;
