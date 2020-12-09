@@ -352,6 +352,7 @@ macro_rules! fast_command {
 #[derive(Debug)]
 pub enum Ads1220Error<E> {
     Spi(E),
+    ConfigVerification((u8, u8)),
 }
 
 impl<E> From<E> for Ads1220Error<E> {
@@ -489,15 +490,31 @@ where
     }
 
     /// Writes a config register of the ADS1220.
-    pub fn set_config<C: Register + Into<u8>>(
+    pub fn set_config_no_verify<C: Register + Into<u8>>(
         &mut self,
         config0: C,
     ) -> Result<(), Ads1220Error<<SPI as Transfer<u8>>::Error>> {
         self.transfer(
             (Command::Wreg as u8) | ((C::ADDRESS) << 2) | 0,
             &mut [config0.into()],
-        )?;
-        Ok(())
+        )
+    }
+
+    /// Writes a config register of the ADS1220, and checks if write was successful
+    pub fn set_config<C: Register + Into<u8> + Eq + From<u8> + Copy>(
+        &mut self,
+        config0: C,
+    ) -> Result<(), Ads1220Error<<SPI as Transfer<u8>>::Error>> {
+        self.set_config_no_verify(config0)?;
+        let readback: C = self.get_config()?;
+        if config0 == readback {
+            Ok(())
+        } else {
+            Err(Ads1220Error::ConfigVerification((
+                config0.into(),
+                readback.into(),
+            )))
+        }
     }
 
     /// Reads a config register of the ADS1220.
